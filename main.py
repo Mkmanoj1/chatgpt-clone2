@@ -41,25 +41,29 @@ async def serve_home():
 
 @app.post("/api/send")
 async def chat_api(user_message: str = Form(...)):
+    if not HF_TOKEN:
+        return JSONResponse({"bot_response": "Error: Hugging Face API token is missing."})
+
     headers = {"Authorization": f"Bearer {HF_TOKEN}"}
     payload = {"inputs": user_message}
     try:
         response = requests.post(HF_API_URL, headers=headers, json=payload, timeout=20)
-        response.raise_for_status()  # Raises an HTTPError for bad responses (4xx, 5xx)
+        response.raise_for_status()
         data = response.json()
-        # Data may be a list or dict depending on model API response
+
         bot_reply = None
         if isinstance(data, dict) and "error" in data:
             bot_reply = f"API error: {data['error']}"
         elif isinstance(data, dict) and "generated_text" in data:
             bot_reply = data["generated_text"]
-        elif isinstance(data, list) and "generated_text" in data[0]:
+        elif isinstance(data, list) and "generated_text" in data:
             bot_reply = data["generated_text"]
         else:
             bot_reply = "Sorry, I could not process your request."
-        # Log to DB
+
         log_message(user_message, bot_reply)
         return JSONResponse({"bot_response": bot_reply})
     except Exception as e:
         return JSONResponse({"bot_response": f"Error: {str(e)}"})
+
 
