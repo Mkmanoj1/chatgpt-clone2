@@ -5,7 +5,7 @@ import sqlite3
 import requests
 import os
 
-HF_MODEL = "facebook/blenderbot-400M-distill" 
+HF_MODEL = "google/gemma-2b-it" 
 HF_API_URL = f"https://api-inference.huggingface.co/models/{HF_MODEL}"
 HF_TOKEN = os.getenv("HF_TOKEN") 
 
