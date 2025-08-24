@@ -9,7 +9,7 @@ HF_MODEL = "facebook/blenderbot-400M-distill"
 HF_API_URL = f"https://api-inference.huggingface.co/models/{HF_MODEL}"
 HF_TOKEN = os.getenv("HF_TOKEN") 
 
-DB_FILE = "db.sqlite"
+DB_FILE = os.path.join("/tmp", "db.sqlite")
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
